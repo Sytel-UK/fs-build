@@ -33,10 +33,22 @@ jobs:
           Copy-Item "fs-build\fs-download.vcxproj" "freeswitch\fs-download.vcxproj" -Force
       - name: Download FreeSWITCH Packages
         working-directory: freeswitch
-        run: msbuild fs-download.vcxproj -t:build -p:Configuration=Release -p:Platform=x64
+        run: msbuild fs-download.vcxproj -t:build -p:Configuration=${{matrix.configuration}} -p:Platform=x64
       - name: Build FreeSWITCH
         working-directory: freeswitch
         run: msbuild SytelFreeswitch.sln -t:build -maxcpucount -noWarn:C4305,C4013,C4114,C4244,C4267,C4312,C4366,C4702,D9035,MSB8004 -p:Configuration=${{matrix.configuration}} -p:Platform=x64
+      - name: Windows signtool.exe code sign action
+        uses: skymatic/code-sign-action@v3.0.0
+        with:
+          # The base64 encoded certificate.
+          certificate: '${{ secrets.SYTEL_CODE_CERT_B64 }}'
+          folder: freeswitch/x64/${{matrix.configuration}}/
+          recursive: true
+          password: '${{ secrets.SYTEL_CODE_CERT_PASSWORD }}'
+          certificatename: Sytel Limited
+          # certificatesha1: # optional
+          # description: # optional
+          # timestampUrl: # optional, default is http://timestamp.digicert.com
       - name: FreeSWITCH Artifacts
         uses: actions/upload-artifact@v4
         with:
