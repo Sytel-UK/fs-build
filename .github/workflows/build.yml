@@ -9,6 +9,12 @@ jobs:
       matrix:
         configuration: [Debug, Release]
     steps:
+      - name: Install Windows 8.1 SDK (FreeSWITCH 1.10.12 still targets this)
+        shell: powershell
+        run: |
+          Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/p/?LinkId=323507 -OutFile sdksetup.exe -UseBasicParsing
+          Write-Host "Downloaded, running sdksetup.exe"
+          Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
       - name: Checkout self
