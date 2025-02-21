@@ -12,7 +12,7 @@
     <ProjectGuid>{B1A2C3D4-E5F6-7890-A1B2-C3D4E5F67890}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>fsdownload</RootNamespace>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
