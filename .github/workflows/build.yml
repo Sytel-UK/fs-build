@@ -1,0 +1,36 @@
+name: Build
+on:
+  # Run manually only
+  workflow_dispatch: {}
+jobs:
+  windows:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+        with:
+          path: fs-build
+      - name: Checkout FreeSWITCH
+        uses: actions/checkout@v4
+        with:
+          repository: signalwire/freeswitch
+          ref: v1.10.12
+          path: freeswitch
+      - name: Setup SytelFreeswitch.sln and fs-download.vcxproj
+        run: |
+          Copy-Item "fs-build\SytelFreeswitch.sln" "freeswitch\SytelFreeswitch.sln" -Force
+          Copy-Item "fs-build\fs-download.vcxproj" "freeswitch\fs-download.vcxproj" -Force
+      - name: Download FreeSWITCH Packages
+        working-directory: freeswitch
+        run: msbuild fs-download.vcxproj -t:build -p:Configuration=Release -p:Platform=x64
+      - name: Build FreeSWITCH
+        working-directory: freeswitch
+        run: msbuild SytelFreeswitch.sln -t:build -maxcpucount -noWarn:C4305,C4013,C4114,C4244,C4267,C4312,C4366,C4702,D9035,MSB8004 -p:Configuration=${{matrix.configuration}} -p:Platform=x64
+      - name: FreeSWITCH Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeSWITCH-${{matrix.configuration}}
+          path: freeswitch/x64/${{matrix.configuration}}/
