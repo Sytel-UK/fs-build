@@ -9,6 +9,8 @@ jobs:
       matrix:
         configuration: [Debug, Release]
     steps:
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
       - name: Checkout self
         uses: actions/checkout@v4
         with:
