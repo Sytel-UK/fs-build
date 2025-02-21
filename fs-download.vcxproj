@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup>
+    <ProjectName>fs-download</ProjectName>
+    <ProjectGuid>{B1A2C3D4-E5F6-7890-A1B2-C3D4E5F67890}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>fsdownload</RootNamespace>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="w32\extlib.props" />
+  <Import Project="w32\broadvoice.props" />
+  <Import Project="w32\curl.props" />
+  <Import Project="w32\flite.props" />
+  <Import Project="w32\gawk.props" />
+  <Import Project="w32\libks.props" />
+  <Import Project="w32\libpq.props" />
+  <Import Project="w32\libsndfile.props" />
+  <Import Project="w32\lua.props" />
+  <Import Project="w32\mariadb-connector-c.props" />
+  <Import Project="w32\opencv.props" />
+  <Import Project="w32\pcre.props" />
+  <Import Project="w32\rabbitmq-c.props" />
+  <Import Project="w32\signalwire-client-c.props" />
+  <Import Project="w32\v8.props" />
+  <Import Project="w32\vsyasm.props" />
+  <Import Project="w32\yasm.props" />
+  <Import Project="w32\download_celt.props" />
+  <Import Project="w32\ffmpeg.props" />
+  <Import Project="w32\download_ffmpeg.props" />
+  <Import Project="w32\download_freetype.props" />
+  <Import Project="w32\g722_1.props" />
+  <Import Project="w32\download_g722_1.props" />
+  <Import Project="w32\ilbc.props" />
+  <Import Project="w32\download_iLBC.props" />
+  <Import Project="w32\download_LAME.props" />
+  <Import Project="w32\download_LDNS.props" />
+  <Import Project="w32\download_libav.props" />
+  <Import Project="w32\libcodec2.props" />
+  <Import Project="w32\download_libcodec2.props" />
+  <Import Project="w32\download_libjpeg.props" />
+  <Import Project="w32\download_libpng.props" />
+  <Import Project="w32\download_libshout.props" />
+  <Import Project="w32\libsilk.props" />
+  <Import Project="w32\download_libsilk.props" />
+  <Import Project="w32\download_libx264.props" />
+  <Import Project="w32\download_mpg123.props" />
+  <Import Project="w32\download_OGG.props" />
+  <Import Project="w32\download_openh264.props" />
+  <Import Project="w32\download_opus.props" />
+  <Import Project="w32\download_pocketsphinx.props" />
+  <Import Project="w32\download_portaudio.props" />
+  <Import Project="w32\download_pthreads.props" />
+  <Import Project="w32\download_sharpziplib.props" />
+  <Import Project="w32\sofia-sip.props" />
+  <Import Project="w32\download_sofia-sip.props" />
+  <Import Project="w32\spandsp.props" />
+  <Import Project="w32\download_speex.props" />
+  <Import Project="w32\download_sphinxbase.props" />
+  <Import Project="w32\download_sphinxmodel.props" />
+  <Import Project="w32\download_sqlite.props" />
+  <Import Project="w32\tiff.props" />
+  <Import Project="w32\download_tiff.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
