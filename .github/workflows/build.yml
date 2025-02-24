@@ -4,7 +4,7 @@ on:
   workflow_dispatch: {}
 jobs:
   headers:
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout FreeSWITCH
         uses: actions/checkout@v4
