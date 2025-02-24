@@ -17,7 +17,7 @@ jobs:
           name: FreeSWITCH-Include
           path: |
             src/include
-            libs/libteletone/*.h
+            libs/libteletone/src/*.h
   windows:
     runs-on: windows-2019
     strategy:
