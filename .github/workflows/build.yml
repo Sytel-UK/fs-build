@@ -3,6 +3,21 @@ on:
   # Run manually only
   workflow_dispatch: {}
 jobs:
+  headers:
+    runs-on: ubuntu-lastest
+    steps:
+      - name: Checkout FreeSWITCH
+        uses: actions/checkout@v4
+        with:
+          repository: signalwire/freeswitch
+          ref: v1.10.12
+      - name: FreeSWITCH Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeSWITCH-Include
+          path: |
+            src/include
+            libs/libteletone/*.h
   windows:
     runs-on: windows-2019
     strategy:
