@@ -28,6 +28,7 @@ DEV="$OUT/devroot/freeswitch"
 # Archives are ABI-tied to the Debian release (glibc/OpenSSL) and architecture
 # they were built on — bake both into the artifact names.
 CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
+VERSION_NUM=$(. /etc/os-release && echo "$VERSION_ID")
 ARCH=$(dpkg --print-architecture)
 SUFFIX="$CONFIG-$CODENAME-$ARCH"
 
@@ -68,7 +69,7 @@ PKGS=$(printf '%s\n' $PKGS | sort -u)
 
 {
   echo "# Debian packages required at runtime (generated from linked sonames)"
-  echo "# Built for: Debian $CODENAME ($ARCH) — this archive is specific to that release"
+  echo "# Built for: Debian $VERSION_NUM ($CODENAME) $ARCH — this archive is specific to that release"
   echo "# Install with: apt-get install \$(grep -v '^#' DEPENDENCIES.txt)"
   printf '%s\n' $PKGS
 } > "$PREFIX/DEPENDENCIES.txt"
