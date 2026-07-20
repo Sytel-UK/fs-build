@@ -100,7 +100,12 @@ cp ../fs-build/linux/modules.conf modules.conf
 # FHS layout (conf under etc/, modules under lib/freeswitch/mod, state under
 # var/) instead of the flat self-contained tree we ship.
 # --enable-portable-binary keeps codegen CPU-generic for redistribution.
+# --with-certsdir: non-FHS builds default certs_dir to <prefix>/certs, but the
+# Softdial services (and FS's own FHS packaging convention) keep TLS certs in
+# the conf tls/ subdir. Bake the matching default; deployments that relocate
+# conf pass -certs explicitly anyway.
 ./configure -C --prefix="$PREFIX" --disable-fhs \
+  --with-certsdir="$PREFIX/conf/tls" \
   --enable-portable-binary --disable-dependency-tracking
 make -j"$JOBS"
 make install
