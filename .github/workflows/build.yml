@@ -73,9 +73,13 @@ jobs:
           path: freeswitch/x64/${{matrix.configuration}}/
   debian:
     runs-on: ubuntu-latest
-    container: debian:bookworm
+    container: debian:${{ matrix.debian }}
     strategy:
       matrix:
+        # Archives are ABI-tied (glibc/OpenSSL) to the Debian release they are
+        # built on; the codename is part of the artifact identity. Add new
+        # releases here when we adopt them.
+        debian: [bookworm]
         configuration: [Debug, Release]
     steps:
       - name: Install checkout prerequisites
@@ -121,16 +125,17 @@ jobs:
       - name: FreeSWITCH Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FreeSWITCH-Debian-${{matrix.configuration}}
+          name: FreeSWITCH-Debian-${{matrix.debian}}-${{matrix.configuration}}
           path: out/
   debian-smoke:
     # Prove the archive works on a clean minimal system with only the
     # packages named in its own DEPENDENCIES.txt.
     needs: debian
     runs-on: ubuntu-latest
-    container: debian:bookworm-slim
+    container: debian:${{ matrix.debian }}-slim
     strategy:
       matrix:
+        debian: [bookworm]
         configuration: [Debug, Release]
     steps:
       - name: Checkout self
@@ -140,7 +145,7 @@ jobs:
       - name: Download archive
         uses: actions/download-artifact@v4
         with:
-          name: FreeSWITCH-Debian-${{matrix.configuration}}
+          name: FreeSWITCH-Debian-${{matrix.debian}}-${{matrix.configuration}}
           path: out
       - name: Smoke test
-        run: sh fs-build/linux/smoke-test.sh out/freeswitch-${{matrix.configuration}}.tar.gz
+        run: sh fs-build/linux/smoke-test.sh out/freeswitch-${{matrix.configuration}}-${{matrix.debian}}-*.tar.gz

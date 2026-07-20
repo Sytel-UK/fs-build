@@ -25,6 +25,12 @@ OUT="${2:-$PWD/out}"
 PREFIX=/opt/softdial/freeswitch
 DEV="$OUT/devroot/freeswitch"
 
+# Archives are ABI-tied to the Debian release (glibc/OpenSSL) and architecture
+# they were built on — bake both into the artifact names.
+CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
+ARCH=$(dpkg --print-architecture)
+SUFFIX="$CONFIG-$CODENAME-$ARCH"
+
 mkdir -p "$OUT" "$DEV/lib"
 
 elf_files() {
@@ -62,6 +68,7 @@ PKGS=$(printf '%s\n' $PKGS | sort -u)
 
 {
   echo "# Debian packages required at runtime (generated from linked sonames)"
+  echo "# Built for: Debian $CODENAME ($ARCH) — this archive is specific to that release"
   echo "# Install with: apt-get install \$(grep -v '^#' DEPENDENCIES.txt)"
   printf '%s\n' $PKGS
 } > "$PREFIX/DEPENDENCIES.txt"
@@ -119,7 +126,9 @@ if [ "$CONFIG" = "Release" ]; then
 fi
 
 # --- archives ---------------------------------------------------------------
-# Both rooted at 'freeswitch': deploy/overlay with tar -C /opt/softdial -xzf
-tar -C /opt/softdial -czf "$OUT/freeswitch-$CONFIG.tar.gz" freeswitch
-tar -C "$OUT/devroot" -czf "$OUT/freeswitch-$CONFIG-dev.tar.gz" freeswitch
+# Both rooted at 'freeswitch': deploy/overlay with tar -C <dest> -xzf.
+# "dev" sits before $SUFFIX so a freeswitch-<Config>-* glob matches only the
+# runtime archive.
+tar -C /opt/softdial -czf "$OUT/freeswitch-$SUFFIX.tar.gz" freeswitch
+tar -C "$OUT/devroot" -czf "$OUT/freeswitch-dev-$SUFFIX.tar.gz" freeswitch
 rm -rf "$OUT/devroot"
