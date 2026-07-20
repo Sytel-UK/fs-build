@@ -13,6 +13,9 @@ git
 wget
 ca-certificates
 uuid-dev
+# in-tree libvpx (video, used by mod_av/mod_fsv) requires an assembler
+nasm
+yasm
 libssl-dev
 zlib1g-dev
 libjpeg62-turbo-dev
