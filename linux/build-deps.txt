@@ -13,6 +13,11 @@ git
 wget
 ca-certificates
 uuid-dev
+# libks is a CMake project built from source by build.sh (needs cmake;
+# libssl-dev + uuid-dev, already listed, cover its OpenSSL/libuuid deps)
+cmake
+# patchelf normalises the bundled ELF runpaths to $ORIGIN in package.sh
+patchelf
 # in-tree libvpx (video, used by mod_av/mod_fsv) requires an assembler
 nasm
 yasm

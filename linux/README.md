@@ -1,9 +1,10 @@
 # Sytel FreeSWITCH build for Debian
 
-Monolithic FreeSWITCH build, self-contained under `/opt/softdial/freeswitch`
-in the Softdial style. Includes binaries, loadable modules, default
-configuration (`conf/`), and the bundled `sofia-sip` and `spandsp` libraries
-(which have no generally-available Debian packages).
+Monolithic, relocatable FreeSWITCH build, self-contained in the Softdial
+style. Includes binaries, loadable modules, default configuration (`conf/`),
+and the bundled `sofia-sip`, `spandsp` and `libks2` libraries (which have no
+generally-available Debian packages; `libks2` is required for
+`endpoints/mod_verto`).
 
 A matching `-dev` archive overlays the same tree with development headers,
 pkg-config files, and (Release) the split debug symbols.
@@ -15,9 +16,18 @@ apt-get install $(grep -v '^#' DEPENDENCIES.txt)   # generally-available Debian 
 tar -C /opt/softdial -xzf freeswitch-Release.tar.gz
 ```
 
-The build is linked with an absolute rpath of `/opt/softdial/freeswitch/lib`,
-so no `ldconfig` or environment setup is needed, but the tree must be
-reachable at that path (a symlink from a versioned directory is fine).
+The tree is **relocatable**: every executable and module carries an
+`$ORIGIN/../lib` runpath, so the bundled libraries are found relative to the
+extracted location. Extract it anywhere (e.g. a per-service directory such as
+`/opt/softdial/edge-gateway/freeswitch` or `/opt/softdial/media-server/freeswitch`);
+no `ldconfig`, `LD_LIBRARY_PATH` or fixed install path is needed.
+
+Note that FreeSWITCH still bakes in the configure-time prefix
+(`/opt/softdial/freeswitch`) as the compiled-in default for its `conf`, `db`,
+`log`, `mod` and `run` directories. When the archive is extracted anywhere
+other than that prefix, pass explicit locations on the command line, e.g.
+`freeswitch -conf <dir>/conf -log <dir>/log -db <dir>/db -mod <dir>/mod`
+(the Softdial services do this automatically).
 
 `DEPENDENCIES.txt` is generated per build from the actual linked libraries and
 is specific to the Debian release this archive was built for.

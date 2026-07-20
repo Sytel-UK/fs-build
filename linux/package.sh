@@ -67,6 +67,35 @@ PKGS=$(printf '%s\n' $PKGS | sort -u)
 } > "$PREFIX/DEPENDENCIES.txt"
 [ -n "$UNOWNED" ] && { echo "sonames with no owning package:$UNOWNED" >&2; exit 1; }
 
+# --- relocatable runpaths ---------------------------------------------------
+# The archive is extracted under per-service directories, not the fixed build
+# prefix, so every executable and module must find the bundled libs relative
+# to its own location. libtool can drop or reorder the -Wl,-rpath flags from
+# build.sh, so normalise the runpath of every dynamically-linked bin/, lib/
+# and mod/ ELF to $ORIGIN/../lib with patchelf (idempotent, whatever the
+# linker produced). Then fail hard if any bin/ or mod/ object still lacks an
+# $ORIGIN runpath or retains an absolute /opt rpath.
+for f in $(elf_files); do
+  readelf -d "$f" 2>/dev/null | grep -q 'NEEDED' || continue
+  patchelf --set-rpath '$ORIGIN/../lib' "$f"
+done
+
+rpath_bad=0
+for f in $(find "$PREFIX/bin" "$PREFIX/mod" -type f \
+             \( -name '*.so*' -o -perm -u+x \)); do
+  head -c4 "$f" | grep -q "$(printf '\177ELF')" || continue
+  readelf -d "$f" 2>/dev/null | grep -q 'NEEDED' || continue
+  dyn=$(readelf -d "$f" 2>/dev/null | grep -E 'R(UN)?PATH' || true)
+  case "$dyn" in
+    *'$ORIGIN'*) ;;
+    *) echo "MISSING \$ORIGIN runpath: $f -> ${dyn:-<none>}" >&2; rpath_bad=1 ;;
+  esac
+  case "$dyn" in
+    */opt/*) echo "ABSOLUTE /opt rpath retained: $f -> $dyn" >&2; rpath_bad=1 ;;
+  esac
+done
+[ "$rpath_bad" = 0 ] || { echo "rpath verification failed" >&2; exit 1; }
+
 cp fs-build/linux/README.md "$PREFIX/README.md"
 
 # --- carve out the dev overlay ----------------------------------------------

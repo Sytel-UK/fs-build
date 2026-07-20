@@ -9,6 +9,10 @@ env:
   # FreeSWITCH v1.11.1 configure.ac requires sofia-sip-ua >= 1.13.17, spandsp >= 3.0
   SOFIA_SIP_REF: v1.13.17
   SPANDSP_REF: master
+  # libks (SignalWire "kitchen sink") is required by FreeSWITCH configure for
+  # endpoints/mod_verto: pkg-config libks2 >= 2.0.11. Built from source (CMake)
+  # by build.sh and bundled in the archive; not in Debian.
+  LIBKS_REF: v2.0.11
 jobs:
   headers:
     runs-on: ubuntu-latest
@@ -100,6 +104,12 @@ jobs:
           repository: freeswitch/spandsp
           ref: ${{ env.SPANDSP_REF }}
           path: spandsp
+      - name: Checkout libks
+        uses: actions/checkout@v4
+        with:
+          repository: signalwire/libks
+          ref: ${{ env.LIBKS_REF }}
+          path: libks
       - name: Install build dependencies
         run: |
           apt-get install -y --no-install-recommends \
