@@ -1,0 +1,55 @@
+# Debian bookworm build dependencies for the Sytel FreeSWITCH build.
+# Derived from configure.ac + per-module Makefile.am for linux/modules.conf.
+# Note: FS 1.11.1 requires PCRE2 (libpcre2-dev), not PCRE1.
+# sofia-sip, spandsp, silk, broadvoice, g722_1 and ilbc are built from source
+# by build.sh, not installed from apt.
+build-essential
+autoconf
+automake
+libtool
+libtool-bin
+pkg-config
+git
+wget
+ca-certificates
+uuid-dev
+# libks is a CMake project built from source by build.sh (needs cmake;
+# libssl-dev + uuid-dev, already listed, cover its OpenSSL/libuuid deps)
+cmake
+# patchelf normalises the bundled ELF runpaths to $ORIGIN in package.sh
+patchelf
+# in-tree libvpx (video, used by mod_av/mod_fsv) requires an assembler
+nasm
+yasm
+libssl-dev
+zlib1g-dev
+libjpeg62-turbo-dev
+libsqlite3-dev
+libcurl4-openssl-dev
+libpcre2-dev
+libspeex-dev
+libspeexdsp-dev
+libldns-dev
+libedit-dev
+libtiff-dev
+libpng-dev
+libfreetype-dev
+unixodbc-dev
+libavformat-dev
+libavcodec-dev
+libavutil-dev
+libswscale-dev
+libswresample-dev
+libshout3-dev
+libmp3lame-dev
+libmpg123-dev
+libsndfile1-dev
+librabbitmq-dev
+flite1-dev
+liblua5.3-dev
+libmariadb-dev
+libpq-dev
+libldap-dev
+libcodec2-dev
+libopus-dev
+libopenal-dev
