@@ -30,7 +30,14 @@ DEV="$OUT/devroot/freeswitch"
 CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
 VERSION_NUM=$(. /etc/os-release && echo "$VERSION_ID")
 ARCH=$(dpkg --print-architecture)
-SUFFIX="$CONFIG-$CODENAME-$ARCH"
+# Linux naming convention: the optimized build is the unnamed default; only
+# variants get (lowercase) qualifiers. Release -> freeswitch-<codename>-<arch>,
+# Debug -> freeswitch-debug-<codename>-<arch>; dev overlays insert "-dev".
+case "$CONFIG" in
+  Release) BASE="freeswitch" ;;
+  Debug)   BASE="freeswitch-debug" ;;
+esac
+SUFFIX="$CODENAME-$ARCH"
 
 mkdir -p "$OUT" "$DEV/lib"
 
@@ -128,8 +135,8 @@ fi
 
 # --- archives ---------------------------------------------------------------
 # Both rooted at 'freeswitch': deploy/overlay with tar -C <dest> -xzf.
-# "dev" sits before $SUFFIX so a freeswitch-<Config>-* glob matches only the
+# "-dev" sits before $SUFFIX so a $BASE-<codename>-* glob matches only the
 # runtime archive.
-tar -C /opt/softdial -czf "$OUT/freeswitch-$SUFFIX.tar.gz" freeswitch
-tar -C "$OUT/devroot" -czf "$OUT/freeswitch-dev-$SUFFIX.tar.gz" freeswitch
+tar -C /opt/softdial -czf "$OUT/$BASE-$SUFFIX.tar.gz" freeswitch
+tar -C "$OUT/devroot" -czf "$OUT/$BASE-dev-$SUFFIX.tar.gz" freeswitch
 rm -rf "$OUT/devroot"

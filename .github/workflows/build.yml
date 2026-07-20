@@ -148,4 +148,9 @@ jobs:
           name: FreeSWITCH-Debian-${{matrix.debian}}-${{matrix.configuration}}
           path: out
       - name: Smoke test
-        run: sh fs-build/linux/smoke-test.sh out/freeswitch-${{matrix.configuration}}-${{matrix.debian}}-*.tar.gz
+        run: |
+          case "${{matrix.configuration}}" in
+            Release) base="freeswitch" ;;
+            Debug)   base="freeswitch-debug" ;;
+          esac
+          sh fs-build/linux/smoke-test.sh out/$base-${{matrix.debian}}-*.tar.gz

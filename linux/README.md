@@ -13,7 +13,7 @@ pkg-config files, and (Release) the split debug symbols.
 
 ```sh
 apt-get install $(grep -v '^#' DEPENDENCIES.txt)   # generally-available Debian packages
-tar -C /opt/softdial -xzf freeswitch-Release.tar.gz
+tar -C /opt/softdial -xzf freeswitch-<codename>-<arch>.tar.gz
 ```
 
 The tree is **relocatable**: every executable and module carries an
@@ -45,8 +45,9 @@ is specific to the Debian release this archive was built for.
 
 ## Debug information
 
-Release archives are stripped; matching DWARF symbols ship separately in
-`freeswitch-symbols.tar.gz` (`.debug` files linked via `.gnu_debuglink`).
-Point gdb at them with `set debug-file-directory` or place them next to the
-binaries. Debug archives (`freeswitch-Debug.tar.gz`) are built `-O0 -ggdb3`
-with symbols left in place.
+The main archive is stripped; DWARF symbols ship in the matching `-dev`
+overlay (`freeswitch-dev-<codename>-<arch>.tar.gz`) as `.debug` files placed
+next to their binaries and linked via `.gnu_debuglink` — extract the overlay
+over an installed tree and gdb finds them automatically. Debug builds
+(`freeswitch-debug-<codename>-<arch>.tar.gz`) are `-O0 -ggdb3` with symbols
+left in place.
