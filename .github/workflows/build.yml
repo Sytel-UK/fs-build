@@ -4,6 +4,10 @@ on:
   workflow_dispatch: {}
 env:
   FREESWITCH_REF: v1.11.1
+  # Sytel build iteration for this FREESWITCH_REF; bump when cutting a new
+  # release of the same upstream version. Marks artifacts as Sytel builds
+  # (Debian downstream-revision style: <upstream>-sytel.<n>).
+  SYTEL_REV: sytel.0
   # sofia-sip and spandsp have no generally-available Debian packages; the
   # Debian build compiles them from source and bundles them in the archive.
   # FreeSWITCH v1.11.1 configure.ac requires sofia-sip-ua >= 1.13.17, spandsp >= 3.0
@@ -123,6 +127,7 @@ jobs:
       - name: Package
         env:
           FS_VERSION: ${{ env.FREESWITCH_REF }}
+          SYTEL_REV: ${{ env.SYTEL_REV }}
         run: sh fs-build/linux/package.sh ${{ matrix.configuration }} "$PWD/out"
       - name: FreeSWITCH Artifacts
         uses: actions/upload-artifact@v7

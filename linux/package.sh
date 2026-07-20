@@ -33,9 +33,13 @@ ARCH=$(dpkg --print-architecture)
 # Linux naming convention (Debian style: name, version, platform): the
 # optimized build is the unnamed default; variants get lowercase qualifiers in
 # name position. freeswitch[-debug][-dev]-<version>-<codename>-<arch>.tar.gz.
-# FS_VERSION is the FreeSWITCH ref from the workflow (leading 'v' stripped).
+# FS_VERSION is the FreeSWITCH ref from the workflow (leading 'v' stripped);
+# SYTEL_REV (e.g. sytel.0) marks this as a Sytel downstream build, in the
+# Debian downstream-revision position: <upstream>-sytel.<n>.
 VERSION="${FS_VERSION#v}"
 [ -n "$VERSION" ] || { echo "FS_VERSION not set" >&2; exit 1; }
+[ -n "$SYTEL_REV" ] || { echo "SYTEL_REV not set" >&2; exit 1; }
+VERSION="$VERSION-$SYTEL_REV"
 case "$CONFIG" in
   Release) BASE="freeswitch" ;;
   Debug)   BASE="freeswitch-debug" ;;
