@@ -2,6 +2,13 @@ name: Build
 on:
   # Run manually only
   workflow_dispatch: {}
+env:
+  FREESWITCH_REF: v1.11.1
+  # sofia-sip and spandsp have no generally-available Debian packages; the
+  # Debian build compiles them from source and bundles them in the archive.
+  # FreeSWITCH v1.11.1 configure.ac requires sofia-sip-ua >= 1.13.17, spandsp >= 3.0
+  SOFIA_SIP_REF: v1.13.17
+  SPANDSP_REF: master
 jobs:
   headers:
     runs-on: ubuntu-latest
@@ -60,3 +67,70 @@ jobs:
         with:
           name: FreeSWITCH-${{matrix.configuration}}
           path: freeswitch/x64/${{matrix.configuration}}/
+  debian:
+    runs-on: ubuntu-latest
+    container: debian:bookworm
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    steps:
+      - name: Install checkout prerequisites
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates
+      - name: Checkout self
+        uses: actions/checkout@v4
+        with:
+          path: fs-build
+      - name: Checkout FreeSWITCH
+        uses: actions/checkout@v4
+        with:
+          repository: signalwire/freeswitch
+          ref: ${{ env.FREESWITCH_REF }}
+          path: freeswitch
+      - name: Checkout sofia-sip
+        uses: actions/checkout@v4
+        with:
+          repository: freeswitch/sofia-sip
+          ref: ${{ env.SOFIA_SIP_REF }}
+          path: sofia-sip
+      - name: Checkout spandsp
+        uses: actions/checkout@v4
+        with:
+          repository: freeswitch/spandsp
+          ref: ${{ env.SPANDSP_REF }}
+          path: spandsp
+      - name: Install build dependencies
+        run: |
+          apt-get install -y --no-install-recommends \
+            $(grep -v '^#' fs-build/linux/build-deps.txt)
+      - name: Build
+        run: sh fs-build/linux/build.sh ${{ matrix.configuration }}
+      - name: Package
+        run: sh fs-build/linux/package.sh ${{ matrix.configuration }} "$PWD/out"
+      - name: FreeSWITCH Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeSWITCH-Debian-${{matrix.configuration}}
+          path: out/
+  debian-smoke:
+    # Prove the archive works on a clean minimal system with only the
+    # packages named in its own DEPENDENCIES.txt.
+    needs: debian
+    runs-on: ubuntu-latest
+    container: debian:bookworm-slim
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+        with:
+          path: fs-build
+      - name: Download archive
+        uses: actions/download-artifact@v4
+        with:
+          name: FreeSWITCH-Debian-${{matrix.configuration}}
+          path: out
+      - name: Smoke test
+        run: sh fs-build/linux/smoke-test.sh out/freeswitch-${{matrix.configuration}}.tar.gz
