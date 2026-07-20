@@ -88,6 +88,19 @@ done
   cmake --install build
 )
 
+# Sound files: match the Windows Release build, which ships exactly the 8kHz
+# en-us-callie set + 8kHz music-on-hold (16/32/48kHz are excluded there too).
+# Versions are pinned by the FreeSWITCH tree itself; fetch the same tarballs
+# the sounds-install make targets would.
+SOUNDS_VER=$(awk '$1=="en-us-callie"{print $2; exit}' freeswitch/build/sounds_version.txt)
+MOH_VER=$(awk 'NF{print $1; exit}' freeswitch/build/moh_version.txt)
+mkdir -p "$PREFIX/sounds"
+for snd in "freeswitch-sounds-en-us-callie-8000-$SOUNDS_VER" \
+           "freeswitch-sounds-music-8000-$MOH_VER"; do
+  wget -nv "https://files.freeswitch.org/$snd.tar.gz"
+  tar -C "$PREFIX/sounds" -xzf "$snd.tar.gz"
+done
+
 # FreeSWITCH itself
 export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
 cd freeswitch
