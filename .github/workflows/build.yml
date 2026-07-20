@@ -121,6 +121,8 @@ jobs:
       - name: Build
         run: sh fs-build/linux/build.sh ${{ matrix.configuration }}
       - name: Package
+        env:
+          FS_VERSION: ${{ env.FREESWITCH_REF }}
         run: sh fs-build/linux/package.sh ${{ matrix.configuration }} "$PWD/out"
       - name: FreeSWITCH Artifacts
         uses: actions/upload-artifact@v7
@@ -153,4 +155,5 @@ jobs:
             Release) base="freeswitch" ;;
             Debug)   base="freeswitch-debug" ;;
           esac
-          sh fs-build/linux/smoke-test.sh out/$base-${{matrix.debian}}-*.tar.gz
+          # [0-9]* pins the next component to the version, excluding -dev names
+          sh fs-build/linux/smoke-test.sh out/$base-[0-9]*-${{matrix.debian}}-*.tar.gz

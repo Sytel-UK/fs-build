@@ -30,14 +30,17 @@ DEV="$OUT/devroot/freeswitch"
 CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
 VERSION_NUM=$(. /etc/os-release && echo "$VERSION_ID")
 ARCH=$(dpkg --print-architecture)
-# Linux naming convention: the optimized build is the unnamed default; only
-# variants get (lowercase) qualifiers. Release -> freeswitch-<codename>-<arch>,
-# Debug -> freeswitch-debug-<codename>-<arch>; dev overlays insert "-dev".
+# Linux naming convention (Debian style: name, version, platform): the
+# optimized build is the unnamed default; variants get lowercase qualifiers in
+# name position. freeswitch[-debug][-dev]-<version>-<codename>-<arch>.tar.gz.
+# FS_VERSION is the FreeSWITCH ref from the workflow (leading 'v' stripped).
+VERSION="${FS_VERSION#v}"
+[ -n "$VERSION" ] || { echo "FS_VERSION not set" >&2; exit 1; }
 case "$CONFIG" in
   Release) BASE="freeswitch" ;;
   Debug)   BASE="freeswitch-debug" ;;
 esac
-SUFFIX="$CODENAME-$ARCH"
+SUFFIX="$VERSION-$CODENAME-$ARCH"
 
 mkdir -p "$OUT" "$DEV/lib"
 
