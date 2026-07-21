@@ -3,11 +3,11 @@ on:
   # Run manually only
   workflow_dispatch: {}
 env:
-  FREESWITCH_REF: v1.11.1
+  FREESWITCH_REF: v1.11.1-sytel.1
   # Sytel build iteration for this FREESWITCH_REF; bump when cutting a new
   # release of the same upstream version. Marks artifacts as Sytel builds
   # (Debian downstream-revision style: <upstream>-sytel.<n>).
-  SYTEL_REV: sytel.0
+  SYTEL_REV: sytel.1
   # sofia-sip and spandsp have no generally-available Debian packages; the
   # Debian build compiles them from source and bundles them in the archive.
   # FreeSWITCH v1.11.1 configure.ac requires sofia-sip-ua >= 1.13.17, spandsp >= 3.0
@@ -24,8 +24,8 @@ jobs:
       - name: Checkout FreeSWITCH
         uses: actions/checkout@v7
         with:
-          repository: signalwire/freeswitch
-          ref: v1.11.1
+          repository: Sytel-UK/freeswitch
+          ref: v1.11.1-sytel.1
       - name: FreeSWITCH Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -48,8 +48,8 @@ jobs:
       - name: Checkout FreeSWITCH
         uses: actions/checkout@v7
         with:
-          repository: signalwire/freeswitch
-          ref: v1.11.1
+          repository: Sytel-UK/freeswitch
+          ref: v1.11.1-sytel.1
           path: freeswitch
       - name: Setup SytelFreeswitch.sln and fs-download.vcxproj
         run: |
@@ -97,7 +97,7 @@ jobs:
       - name: Checkout FreeSWITCH
         uses: actions/checkout@v7
         with:
-          repository: signalwire/freeswitch
+          repository: Sytel-UK/freeswitch
           ref: ${{ env.FREESWITCH_REF }}
           path: freeswitch
       - name: Checkout sofia-sip
@@ -126,7 +126,12 @@ jobs:
         run: sh fs-build/linux/build.sh ${{ matrix.configuration }}
       - name: Package
         env:
-          FS_VERSION: ${{ env.FREESWITCH_REF }}
+          # Upstream base version only. The FreeSWITCH ref is the Sytel tag
+          # (v1.11.1-sytel.1), but the Debian downstream revision is appended
+          # separately by package.sh via SYTEL_REV, so FS_VERSION must stay the
+          # bare upstream version to yield <upstream>-sytel.<n> exactly once
+          # (1.11.1-sytel.1), not a doubled 1.11.1-sytel.1-sytel.1.
+          FS_VERSION: v1.11.1
           SYTEL_REV: ${{ env.SYTEL_REV }}
         run: sh fs-build/linux/package.sh ${{ matrix.configuration }} "$PWD/out"
       - name: FreeSWITCH Artifacts
