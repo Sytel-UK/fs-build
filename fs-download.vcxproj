@@ -39,9 +39,8 @@
   <Import Project="w32\pcre.props" />
   <Import Project="w32\rabbitmq-c.props" />
   <Import Project="w32\signalwire-client-c.props" />
-  <Import Project="w32\v8.props" />
-  <Import Project="w32\vsyasm.props" />
-  <Import Project="w32\yasm.props" />
+  <Import Project="w32\libnode.props" />
+  <Import Project="w32\nasm.props" />
   <Import Project="w32\download_celt.props" />
   <Import Project="w32\ffmpeg.props" />
   <Import Project="w32\download_ffmpeg.props" />
@@ -52,15 +51,12 @@
   <Import Project="w32\download_iLBC.props" />
   <Import Project="w32\download_LAME.props" />
   <Import Project="w32\download_LDNS.props" />
-  <Import Project="w32\download_libav.props" />
   <Import Project="w32\libcodec2.props" />
-  <Import Project="w32\download_libcodec2.props" />
   <Import Project="w32\download_libjpeg.props" />
   <Import Project="w32\download_libpng.props" />
   <Import Project="w32\download_libshout.props" />
   <Import Project="w32\libsilk.props" />
   <Import Project="w32\download_libsilk.props" />
-  <Import Project="w32\download_libx264.props" />
   <Import Project="w32\download_mpg123.props" />
   <Import Project="w32\download_OGG.props" />
   <Import Project="w32\download_openh264.props" />
